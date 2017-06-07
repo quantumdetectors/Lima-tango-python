@@ -387,18 +387,18 @@ class Xspress3Class(PyTango.DeviceClass):
             [PyTango.DevLong,
             "override the base IP port number or 0 to use the default",
             [30123]],
-        'createScopeModule':
-            [PyTango.DevBoolean,
-            "true = don`t create a scope data module",
-            [False]],
+        # 'createScopeModule':
+        #     [PyTango.DevBoolean,
+        #     "true = don`t create a scope data module",
+        #     [False]],
         'maxFrames':
             [PyTango.DevLong,
             "Maximum number of 4096 energy bin spectra timeframes",
             [16384]],
-        'scopeModName':
-            [PyTango.DevString,
-            "the scope data module filename or NULL to use the default.",
-            ["NULL"] ],
+        # 'scopeModName':
+        #     [PyTango.DevString,
+        #     "the scope data module filename or NULL to use the default.",
+        #     ["NULL"] ],
         'nbCards':
             [PyTango.DevLong,
             "the number of xspress3 cards that constitute the xspress3 system",
@@ -411,10 +411,10 @@ class Xspress3Class(PyTango.DeviceClass):
             [PyTango.DevLong,
             "debug messages (0 = off, 1=normal, 2=verbose)",
             [0]],
-        'noUDP':
-            [PyTango.DevBoolean,
-            "true = don`t do UDP connection",
-            [False]],
+        # 'noUDP':
+        #     [PyTango.DevBoolean,
+        #     "true = don`t do UDP connection",
+        #     [False]],
         'cardIndex':
             [PyTango.DevLong,
             "Starting card index",
@@ -432,9 +432,9 @@ class Xspress3Class(PyTango.DeviceClass):
         'Reset':
             [[PyTango.DevVoid, ""],
             [PyTango.DevVoid, ""]],
-        'InitBrams':
-            [[PyTango.DevLong, "channel"],
-            [PyTango.DevVoid, ""]],
+        # 'InitBrams':
+        #     [[PyTango.DevLong, "channel"],
+        #     [PyTango.DevVoid, ""]],
         'Pause':
             [[PyTango.DevVoid, "none"],
             [PyTango.DevVoid, "none"]],
@@ -447,162 +447,162 @@ class Xspress3Class(PyTango.DeviceClass):
         'Clear':
             [[PyTango.DevVoid, "none"],
             [PyTango.DevVoid, "none"]],
-        'SaveSettings':
-            [[PyTango.DevVoid, "none"],
-            [PyTango.DevVoid, "none"]],
-        'RestoreSettings':
-            [[PyTango.DevBoolean, "force restore if major revision of saved file does not match the firmware revision."],
-            [PyTango.DevVoid, "none"]],
-        'InitRois':
-            [[PyTango.DevLong, "channel"],
-            [PyTango.DevVoid, ""]],
+        # 'SaveSettings':
+        #     [[PyTango.DevVoid, "none"],
+        #     [PyTango.DevVoid, "none"]],
+        # 'RestoreSettings':
+        #     [[PyTango.DevBoolean, "force restore if major revision of saved file does not match the firmware revision."],
+        #     [PyTango.DevVoid, "none"]],
+        # 'InitRois':
+        #     [[PyTango.DevLong, "channel"],
+        #     [PyTango.DevVoid, ""]],
         'ReadHistogram':
             [[PyTango.DevVarLongArray,"frame, channel"],
             [PyTango.DevVarULongArray,"the histogram data"]],
         'ReadScalers':
             [[PyTango.DevVarLongArray,"frame, channel"],
             [PyTango.DevVarDoubleArray,"the scaler data"]],
-        'StartScope':
-            [[PyTango.DevVoid, "none"],
-            [PyTango.DevVoid, "none"]],
+        # 'StartScope':
+        #     [[PyTango.DevVoid, "none"],
+        #     [PyTango.DevVoid, "none"]],
         'LoadPlayback':
             [[PyTango.DevVarLongArray,"src0,src1,[num_streams, digital]"],
             [PyTango.DevVoid, "none"]],
-        'FormatRun':
-            [[PyTango.DevVarLongArray,"chan,[nbits_eng,aux1_mode,adc_bits,min_samples,aux2_mode,pileup_reject]"],
-            [PyTango.DevVoid, "none"]],
+        # 'FormatRun':
+        #     [[PyTango.DevVarLongArray,"chan,[nbits_eng,aux1_mode,adc_bits,min_samples,aux2_mode,pileup_reject]"],
+        #     [PyTango.DevVoid, "none"]],
         }
 
     attr_list = {
-         'card':
-            [[PyTango.DevLong,
-              PyTango.SCALAR,
-              PyTango.READ_WRITE]],
+         # 'card':
+         #    [[PyTango.DevLong,
+         #      PyTango.SCALAR,
+         #      PyTango.READ_WRITE]],
 
-         'channel':
-            [[PyTango.DevLong,
-              PyTango.SCALAR,
-              PyTango.READ_WRITE]],
+         # 'channel':
+         #    [[PyTango.DevLong,
+         #      PyTango.SCALAR,
+         #      PyTango.READ_WRITE]],
 
          'numChan':
             [[PyTango.DevLong,
               PyTango.SCALAR,
               PyTango.READ]],
 
-         'numCards':
-            [[PyTango.DevLong,
-              PyTango.SCALAR,
-              PyTango.READ]],
+         # 'numCards':
+         #    [[PyTango.DevLong,
+         #      PyTango.SCALAR,
+         #      PyTango.READ]],
 
-         'chansPerCard':
-            [[PyTango.DevLong,
-              PyTango.SCALAR,
-              PyTango.READ]],
+         # 'chansPerCard':
+         #    [[PyTango.DevLong,
+         #      PyTango.SCALAR,
+         #      PyTango.READ]],
 
-         'maxNumChan':
-            [[PyTango.DevLong,
-              PyTango.SCALAR,
-              PyTango.READ]],
+         # 'maxNumChan':
+         #    [[PyTango.DevLong,
+         #      PyTango.SCALAR,
+         #      PyTango.READ]],
 
-         'binsPerMca':
-            [[PyTango.DevLong,
-              PyTango.SCALAR,
-              PyTango.READ]],
+         # 'binsPerMca':
+         #    [[PyTango.DevLong,
+         #      PyTango.SCALAR,
+         #      PyTango.READ]],
 
-         'windows':
-            [[PyTango.DevLong,
-              PyTango.SPECTRUM,
-              PyTango.READ_WRITE, 32]],
+         # 'windows':
+         #    [[PyTango.DevLong,
+         #      PyTango.SPECTRUM,
+         #      PyTango.READ_WRITE, 32]],
 
-          'runMode':
-            [[PyTango.DevBoolean,
-              PyTango.SPECTRUM,
-              PyTango.READ_WRITE, 4]],
+         #  'runMode':
+         #    [[PyTango.DevBoolean,
+         #      PyTango.SPECTRUM,
+         #      PyTango.READ_WRITE, 4]],
 
-          'goodThreshold':
-            [[PyTango.DevLong,
-              PyTango.SPECTRUM,
-              PyTango.READ_WRITE, 16]],
+         #  'goodThreshold':
+         #    [[PyTango.DevLong,
+         #      PyTango.SPECTRUM,
+         #      PyTango.READ_WRITE, 16]],
 
-          'dtcEnergy':
-            [[PyTango.DevDouble,
-              PyTango.SCALAR,
-              PyTango.READ_WRITE]],
+         #  'dtcEnergy':
+         #    [[PyTango.DevDouble,
+         #      PyTango.SCALAR,
+         #      PyTango.READ_WRITE]],
 
-          'dtcParameters':
-            [[PyTango.DevDouble,
-              PyTango.SPECTRUM,
-              PyTango.READ_WRITE, 48]],
+         #  'dtcParameters':
+         #    [[PyTango.DevDouble,
+         #      PyTango.SPECTRUM,
+         #      PyTango.READ_WRITE, 48]],
 
-          'scaling':
-            [[PyTango.DevDouble,
-              PyTango.SPECTRUM,
-              PyTango.READ_WRITE, 8]],
+         #  'scaling':
+         #    [[PyTango.DevDouble,
+         #      PyTango.SPECTRUM,
+         #      PyTango.READ_WRITE, 8]],
 
           'fanTemperatures':
             [[PyTango.DevDouble,
               PyTango.SPECTRUM,
               PyTango.READ, 50]],
 
-          'fanController':
-            [[PyTango.DevDouble,
-              PyTango.SPECTRUM,
-              PyTango.WRITE, 2]],
+          # 'fanController':
+          #   [[PyTango.DevDouble,
+          #     PyTango.SPECTRUM,
+          #     PyTango.WRITE, 2]],
 
-          'setPoint':
-            [[PyTango.DevDouble,
-              PyTango.SCALAR,
-              PyTango.WRITE]],
+          # 'setPoint':
+          #   [[PyTango.DevDouble,
+          #     PyTango.SCALAR,
+          #     PyTango.WRITE]],
 
-          'roi':
-            [[PyTango.DevLong,
-              PyTango.SPECTRUM,
-              PyTango.WRITE, 25]],
+          # 'roi':
+          #   [[PyTango.DevLong,
+          #     PyTango.SPECTRUM,
+          #     PyTango.WRITE, 25]],
 
-          'useDtc':
-            [[PyTango.DevBoolean,
-              PyTango.SCALAR,
-              PyTango.READ_WRITE]],
+          # 'useDtc':
+          #   [[PyTango.DevBoolean,
+          #     PyTango.SCALAR,
+          #     PyTango.READ_WRITE]],
 
           'acqRunning':
             [[PyTango.DevBoolean,
               PyTango.SCALAR,
               PyTango.READ]],
 
-          'setTiming':
-            [[PyTango.DevLong,
-              PyTango.SPECTRUM,
-              PyTango.WRITE, 7]],
+          # 'setTiming':
+          #   [[PyTango.DevLong,
+          #     PyTango.SPECTRUM,
+          #     PyTango.WRITE, 7]],
 
-          'adcTempLimit':
-            [[PyTango.DevLong,
-              PyTango.SCALAR,
-              PyTango.WRITE]],
+          # 'adcTempLimit':
+          #   [[PyTango.DevLong,
+          #     PyTango.SCALAR,
+          #     PyTango.WRITE]],
 
-          'setPlayback':
-            [[PyTango.DevBoolean,
-              PyTango.SCALAR,
-              PyTango.WRITE]],
+          # 'setPlayback':
+          #   [[PyTango.DevBoolean,
+          #     PyTango.SCALAR,
+          #     PyTango.WRITE]],
 
           'playbackFilename':
             [[PyTango.DevString,
               PyTango.SCALAR,
               PyTango.READ_WRITE]],
 
-          'dataSource':
-            [[PyTango.DevString,
-              PyTango.SPECTRUM,
-              PyTango.READ_WRITE,8]],
+          # 'dataSource':
+          #   [[PyTango.DevString,
+          #     PyTango.SPECTRUM,
+          #     PyTango.READ_WRITE,8]],
 
          'histogram':
             [[PyTango.DevLong,
               PyTango.SPECTRUM,
               PyTango.READ, 4096]],
 
-         'setItfgTiming':
-            [[PyTango.DevLong,
-              PyTango.SPECTRUM,
-              PyTango.WRITE, 3]],
+         # 'setItfgTiming':
+         #    [[PyTango.DevLong,
+         #      PyTango.SPECTRUM,
+         #      PyTango.WRITE, 3]],
      }
 
     def __init__(self, name) :
