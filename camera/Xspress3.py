@@ -378,15 +378,15 @@ class Xspress3Class(PyTango.DeviceClass):
         'baseIPaddress':
             [PyTango.DevString,
             "override the base IP address (e.g. 192.168.0.1) \nfrom which all other address`s are calculated or NULL to use the default",
-            [] ],
+            ['192.168.0.1'] ],
         'baseMacAddress':
             [PyTango.DevString,
             "override the base MAC address (e.g. 02.00.00.00.00),\nfrom which all other card MAC address`s are calculated or NULL to use the default",
-            [] ],
+            ['02.00.00.00.00.00'] ],
         'basePort':
             [PyTango.DevLong,
             "override the base IP port number or 0 to use the default",
-            [0]],
+            [30123]],
         'createScopeModule':
             [PyTango.DevBoolean,
             "true = don`t create a scope data module",
@@ -394,14 +394,14 @@ class Xspress3Class(PyTango.DeviceClass):
         'maxFrames':
             [PyTango.DevLong,
             "Maximum number of 4096 energy bin spectra timeframes",
-            [1]],
+            [16384]],
         'scopeModName':
             [PyTango.DevString,
             "the scope data module filename or NULL to use the default.",
             ["NULL"] ],
         'nbCards':
             [PyTango.DevLong,
-            "the number of xspress3 cards that constitute the xspress3 system, \nbetween 1 and  XSP3_MAX_CARDS",
+            "the number of xspress3 cards that constitute the xspress3 system",
             [1]],
         'nbChans':
             [PyTango.DevLong,
@@ -418,11 +418,11 @@ class Xspress3Class(PyTango.DeviceClass):
         'cardIndex':
             [PyTango.DevLong,
             "Starting card index",
-            [] ],
+            [0] ],
         'directoryName':
             [PyTango.DevString,
             "The directory name to save and restore configurations",
-            [] ],
+            [''] ],
         }
 
     cmd_list = {
