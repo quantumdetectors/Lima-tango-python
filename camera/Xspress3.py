@@ -622,7 +622,6 @@ _Xspress3Interface = None
 def get_control(nbCards=1, maxFrames=1, baseIPaddress="", basePort=0, baseMACaddress="", nbChans=1, createScopeModule=0, scopeModName="", debug=1, cardIndex=0, noUDP=0, directoryName="", **keys) :
     global _Xspress3Camera
     global _Xspress3Interface
-    Core.DebParams.setTypeFlags(Core.DebParams.AllFlags)
     if _Xspress3Interface is None:
         _Xspress3Camera = Xspress3Acq.Camera(int(nbCards), int(maxFrames), baseIPaddress, int(basePort), baseMACaddress, int(nbChans),
                                           bool(int(createScopeModule)), scopeModName, int(debug), int(cardIndex), bool(int(noUDP)), directoryName)
