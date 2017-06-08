@@ -374,12 +374,14 @@ class LimaCCDs(PyTango.Device_4Impl) :
 
         self.__control = _get_control()
 
-        try:
-            nb_thread = int(self.NbProcessingThread)
-        except ValueError:
-            pass
-        else:
-            Core.Processlib.PoolThreadMgr.get().setNumberOfThread(nb_thread)
+        # For performance settings Pool thread (default 2) and Writing tasks (default 1)
+        nb_thread = int(self.NbProcessingThread)
+        Core.Processlib.PoolThreadMgr.get().setNumberOfThread(nb_thread)
+
+        max_concurrent_writing_task = int(self.SavingMaxConcurrentWritingTask)
+        if SystemHasFeature('Core.CtSaving.setMaxConcurrentWritingTask'):
+            saving = self.__control.saving()
+            saving.setMaxConcurrentWritingTask(max_concurrent_writing_task)
 
         interface = self.__control.hwInterface()
         self.__detinfo = interface.getHwCtrlObj(Core.HwCap.DetInfo)
@@ -545,6 +547,13 @@ class LimaCCDs(PyTango.Device_4Impl) :
 	    self.__VideoMode['BAYER_BG8'] = Core.BAYER_BG8
 	    self.__VideoMode['BAYER_BG16'] = Core.BAYER_BG16
 
+        #new formats added in core 1.7
+        if SystemHasFeature('Core.YUV411PACKED'):
+            self.__VideoMode['YUV411PACKED'] = Core.YUV411PACKED
+            self.__VideoMode['YUV422PACKED'] = Core.YUV422PACKED
+            self.__VideoMode['YUV444PACKED'] = Core.YUV444PACKED
+
+                
         self.__VideoSource = {}
         if SystemHasFeature('Core.CtVideo.BASE_IMAGE'):
             self.__VideoSource = {'BASE_IMAGE': Core.CtVideo.BASE_IMAGE,
@@ -889,7 +898,6 @@ class LimaCCDs(PyTango.Device_4Impl) :
     @Core.DEB_MEMBER_FUNCT
     def write_acc_saturated_threshold(self,attr) :        
         data = attr.get_write_value()
-
         acc = self.__control.accumulation()
         acc.setPixelThresholdValue(data)
 
@@ -1205,15 +1213,27 @@ class LimaCCDs(PyTango.Device_4Impl) :
     
     ## @brief read write statistic
     #
+    # return saving_speed,compression_speed, compression_ratio,incoming_speed
     @Core.DEB_MEMBER_FUNCT
-    def read_write_statistic(self,attr) :
+    def read_saving_statistics(self,attr) :
         saving = self.__control.saving()
-        stat = saving.getWriteTimeStatistic()
-        if not len(stat) :
-            attr.set_value([-1],1)
-        else:
-            attr.set_value(stat,len(stat))
+        attr.set_value(saving.getStatisticCounters(),4)
 	
+    ## @brief get the write statistics history size
+    #
+    @Core.DEB_MEMBER_FUNCT
+    def read_saving_statistics_history(self,attr) :
+        saving = self.__control.saving()
+        attr.set_value(saving.getStatisticHistorySize())
+
+    
+    ## @brief set the write statistics history size
+    #
+    @Core.DEB_MEMBER_FUNCT
+    def write_saving_statistics_history(self,attr) :
+        stat_size = attr.get_write_value()
+        saving = self.__control.saving()
+        saving.setStatisticHistorySize(stat_size)
 
     ## @brief Write current shutter state if in manual mode
     # True-Open, False-Close
@@ -1380,7 +1400,26 @@ class LimaCCDs(PyTango.Device_4Impl) :
             defaultSuffix = self.__SavingFormatDefaultSuffix.get(value,'.unknown')
             saving.setSuffix(defaultSuffix)
 
-    ##@biref Read possible modules
+    
+    ## @brief get the maximum number of task for concurrent writing (saving)
+    #
+    @RequiresSystemFeature('Core.CtSaving.setMaxConcurrentWritingTask')
+    @Core.DEB_MEMBER_FUNCT
+    def read_saving_max_writing_task(self, attr):
+        saving = self.__control.saving()
+        attr.set_value(saving.getMaxConcurrentWritingTask())
+        
+    ## @brief set the maximum number of task for concurrent writing (saving)
+    #
+    @RequiresSystemFeature('Core.CtSaving.getMaxConcurrentWritingTask')
+    @Core.DEB_MEMBER_FUNCT
+    def write_saving_max_writing_task(self,attr) :
+        data = attr.get_write_value()
+        saving = self.__control.saving()
+
+        saving.setMaxConcurrentWritingTask(data)
+
+    ##@brief Read possible modules
     #
     def read_debug_modules_possible(self,attr) :
         attr.set_value(LimaCCDs._debugModuleList,len(LimaCCDs._debugModuleList))
@@ -1600,6 +1639,12 @@ class LimaCCDs(PyTango.Device_4Impl) :
     def stopAcq(self) :
         self.__control.stopAcq()
 
+   ##@brief abort an acquisition
+    #
+    @Core.DEB_MEMBER_FUNCT
+    def abortAcq(self) :
+        self.__control.abortAcq()
+
     ##@brief reset acquisition
     #
     @Core.DEB_MEMBER_FUNCT
@@ -1644,6 +1689,14 @@ class LimaCCDs(PyTango.Device_4Impl) :
         control = self.__control
         saving = control.saving()
         saving.resetCommonHeader()
+
+    ##@brief reset frames header
+    #
+    @Core.DEB_MEMBER_FUNCT
+    def resetFrameHeaders(self):
+        control = self.__control
+        saving = control.saving()
+        saving.removeAllFrameHeaders()
 
     ##@brief get image data
     #
@@ -1915,6 +1968,9 @@ class LimaCCDsClass(PyTango.DeviceClass) :
         'TangoEvent' :
         [PyTango.DevBoolean,
          "Activate Tango event",[False]],
+        'SavingMaxConcurrentWritingTask':
+        [PyTango.DevShort,
+         "Maximum concurrent writing tasks",[1]],
         }
 
     #    Command definitions
@@ -1940,6 +1996,9 @@ class LimaCCDsClass(PyTango.DeviceClass) :
         'stopAcq':
         [[PyTango.DevVoid,""],
          [PyTango.DevVoid,""]],
+        'abortAcq':
+        [[PyTango.DevVoid,""],
+         [PyTango.DevVoid,""]],
         'reset':
         [[PyTango.DevVoid,""],
          [PyTango.DevVoid,""]],
@@ -1947,6 +2006,9 @@ class LimaCCDsClass(PyTango.DeviceClass) :
         [[PyTango.DevVarStringArray,"ImageId0 SEPARATOR imageHeader0,ImageId1 SEPARATOR imageHeader1..."],
          [PyTango.DevVoid,""]],
         'resetCommonHeader':
+        [[PyTango.DevVoid,""],
+         [PyTango.DevVoid,""]],
+        'resetFrameHeaders':
         [[PyTango.DevVoid,""],
          [PyTango.DevVoid,""]],
         'getImage':
@@ -2210,10 +2272,6 @@ class LimaCCDsClass(PyTango.DeviceClass) :
         [[PyTango.DevBoolean,
           PyTango.SCALAR,
           PyTango.READ]],
-        'write_statistic':
-        [[PyTango.DevDouble,
-          PyTango.SPECTRUM,
-          PyTango.READ,256]],
         'shutter_mode':
         [[PyTango.DevString,
           PyTango.SCALAR,
@@ -2278,6 +2336,18 @@ class LimaCCDsClass(PyTango.DeviceClass) :
 	[[PyTango.DevString,
 	  PyTango.SCALAR,
 	  PyTango.READ_WRITE]],
+        'saving_statistics':
+        [[PyTango.DevDouble,
+          PyTango.SPECTRUM,
+          PyTango.READ,4]],
+        'saving_statistics_history':
+        [[PyTango.DevLong,
+          PyTango.SCALAR,
+          PyTango.READ_WRITE]],
+        'saving_max_writing_task':
+        [[PyTango.DevShort,
+          PyTango.SCALAR,
+          PyTango.READ_WRITE]],
         'debug_modules_possible':
          [[PyTango.DevString,
           PyTango.SPECTRUM,
