@@ -30,7 +30,7 @@ from Lima import Core
 from Lima.Server.plugins.Utils import getDataFromFile,BasePostProcess
 
 def grouper(n, iterable, padvalue=None):
-    return itertools.izip(*[itertools.chain(iterable, itertools.repeat(padvalue, n-1))]*n)
+    return zip(*[itertools.chain(iterable, itertools.repeat(padvalue, n-1))]*n)
 
 Roi2SpectrumTask = Core.Processlib.Tasks.Roi2SpectrumTask
 
@@ -106,7 +106,7 @@ class Roi2spectrumDeviceServer(BasePostProcess) :
     def addNames(self,argin):
         roi_id = []
         for roi_name in argin:
-            if not self.__roiName2ID.has_key(roi_name):
+            if not roi_name in self.__roiName2ID:
                 self.__roiName2ID[roi_name] = self.__currentRoiId
                 self.__roiID2Name[self.__currentRoiId] = roi_name
                 roi_id.append(self.__currentRoiId)
@@ -132,7 +132,7 @@ class Roi2spectrumDeviceServer(BasePostProcess) :
                 roi_name = self.__roiID2Name.get(roi_id,None)
                 if roi_name is None:
                     raise RuntimeError('should call add method before setRoi')
-                roi_list.append((roi_name,Core.Roi(x,y,width,height)))
+                roi_list.append((roi_name.encode(),Core.Roi(x,y,width,height)))
             self.__roi2spectrumMgr.updateRois(roi_list)
         else:
             raise AttributeError('should be a vector as follow [roi_id0,x0,y0,width0,height0,...')
@@ -200,8 +200,13 @@ class Roi2spectrumDeviceServer(BasePostProcess) :
         #Overflow
         if fromImageId >= 0 and startImage != fromImageId :
             raise 'Overrun ask id %d, given id %d (no more in memory' % (fromImageId,startImage)
-        self._data_cache = data         # Tango is not so beautiful
-        return data.buffer.ravel()
+        
+        # Check whether the spectrum is ready
+        if data.buffer is None:
+            return []
+        else:
+            self._data_cache = data         # Tango is not so beautiful
+            return data.buffer.ravel()
 
 #==================================================================
 #
