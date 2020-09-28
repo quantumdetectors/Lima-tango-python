@@ -88,6 +88,7 @@ class RoiCounterDeviceServer(BasePostProcess) :
                 extOpt = ctControl.externalOperation()
                 self.__roiCounterMgr = extOpt.addOp(Core.ROICOUNTERS,self.ROI_COUNTER_TASK_NAME,
                                                     self._runLevel)
+                self.__roiCounterMgr.setBufferSize(int(self.BufferSize))
             self.__roiCounterMgr.clearCounterStatus()
 
         PyTango.LatestDeviceImpl.set_state(self,state)
@@ -366,6 +367,9 @@ class RoiCounterDeviceServerClass(PyTango.DeviceClass):
 
     #	 Device Properties
     device_property_list = {
+        'BufferSize':
+        [PyTango.DevShort,
+         "Rois buffer size",[256]],
         }
 
 
