@@ -939,7 +939,7 @@ class LimaCCDs(PyTango.LatestDeviceImpl) :
         else:
             msg = "Accumulation threshold plugins not loaded"
             deb.Error(msg)
-            raise Exception(msg)
+            attr.set_value(-1)
 
     ## @brief active/unactive calculation of saturated images and counters
     #
